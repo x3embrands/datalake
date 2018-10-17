@@ -343,6 +343,9 @@ class Data_Ingestion():
         goodtrans=goodtrans[goodtrans['WHOLESALE']==0]
         goodtrans = goodtrans[goodtrans['FREE'] == 0]
         raw_sales=pd.merge(raw_sales,goodtrans[['TRANSACTION_ID']],left_on=['Name'],right_on=['TRANSACTION_ID'])
+        
+        spent = raw_sales.groupby(['Email']).Subtotal.agg('sum')
+        spent = spent.rename(columns = {'Email':'EMAIL', 'Subtotal':'TOTAL_SPEND'})
 
         billinglist = ['Billing Name','Billing Street','Billing Address1','Billing Address2','Billing Company','Billing City','Billing Zip','Billing Province','Billing Country','Billing Phone']
         shiplist = ['Shipping Name','Shipping Street','Shipping Address1','Shipping Address2','Shipping Company','Shipping City','Shipping Zip','Shipping Province','Shipping Country','Shipping Phone']
@@ -358,6 +361,7 @@ class Data_Ingestion():
         a = Analysis
         purchase_desc = a.append_customer_sales_stats(self,'Hier1_Type')
         customer_desc = pd.merge(customer_desc,purchase_desc,left_on=['EMAIL'],right_on=['EMAIL'],how='left')
+        customer_desc = pd.merge(customer_desc,spent,left_on=['EMAIL'],right_on=['EMAIL'],how='left')
 
         customer_desc.to_csv('MasterTables/CUSTOMER_MASTER.csv',index=False)
 
