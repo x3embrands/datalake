@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 import ast
 import matplotlib.pyplot as plt
-
+import os
 class Data_Ingestion():
 
     def create_transaction_master_from_sales(self,raw_sales_df):
